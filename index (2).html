@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Visualisasi Keramik 2xN</title>
+
+<style>
+    body {
+        font-family: Poppins, Arial, sans-serif;
+        background: #eef1f7;
+        margin: 0;
+        padding: 30px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+    .panel {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    input {
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #999;
+        width: 70px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 8px 16px;
+        background: #3498db;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    button:hover {
+        background: #217dbb;
+    }
+
+    #info {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #555;
+    }
+
+    #output {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .pattern-box {
+        background: #ffffff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 7px rgba(0,0,0,0.15);
+    }
+
+    .floor {
+        display: grid;
+        grid-template-rows: 40px 40px;
+        grid-auto-columns: 40px;
+        grid-auto-flow: column;
+        gap: 3px;
+    }
+
+    .tileV {
+        background: #4ca04c;
+        grid-row: 1 / span 2;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        color: #145214;
+        font-size: 20px;
+    }
+
+    .tileHtop, .tileHbottom {
+        background: #e4ec14;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        color: #8c4a00;
+        font-size: 20px;
+    }
+</style>
+
+</head>
+<body>
+
+<h1>Visualisasi Keramik 2 × N</h1>
+
+<div class="panel">
+    <input type="number" id="inputN" placeholder="Masukkan N">
+    <button onclick="run()">Tampilkan</button>
+</div>
+
+<div id="info">Input jumlah N (Lebar Ruangan) lalu klik Tampilkan.</div>
+
+<div id="output"></div>
+
+<script>
+function getPatterns(n) {
+    if (n === 0) return [[]];
+    if (n < 0) return [];
+
+    let result = [];
+
+    getPatterns(n - 1).forEach(a => result.push(["V", ...a]));
+    getPatterns(n - 2).forEach(a => result.push(["H", ...a]));
+
+    return result;
+}
+
+function render(patterns) {
+    const out = document.getElementById("output");
+    out.innerHTML = "";
+
+    patterns.forEach(pattern => {
+        const box = document.createElement("div");
+        box.className = "pattern-box";
+
+        const grid = document.createElement("div");
+        grid.className = "floor";
+
+        let col = 1;
+
+        pattern.forEach(type => {
+            if (type === "V") {
+                const tile = document.createElement("div");
+                tile.className = "tileV";
+                tile.textContent = "V";
+                tile.style.gridColumn = col;
+                grid.appendChild(tile);
+                col++;
+            } else {
+                const top = document.createElement("div");
+                top.className = "tileHtop";
+                top.textContent = "H";
+                top.style.gridColumn = col + " / span 2";
+
+                const bottom = document.createElement("div");
+                bottom.className = "tileHbottom";
+                bottom.textContent = "H";
+                bottom.style.gridColumn = col + " / span 2";
+
+                grid.appendChild(top);
+                grid.appendChild(bottom);
+
+                col += 2;
+            }
+        });
+
+        box.appendChild(grid);
+        out.appendChild(box);
+    });
+}
+
+function run() {
+    const n = parseInt(document.getElementById("inputN").value);
+    if (!n || n < 1) {
+        alert("Masukkan N minimal 1");
+        return;
+    }
+
+    const patterns = getPatterns(n);
+    document.getElementById("info").textContent =
+        `Total Pola: ${patterns.length}`;
+    render(patterns);
+}
+</script>
+
+</body>
+</html>
